@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,47 +12,37 @@ app.use(cors({
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/mydatabase', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error(err));
 
-// Define movie schema
-const movieSchema = new mongoose.Schema({
-    title: String,
-    director: String,
-    year: Number
+// Define review schema
+const reviewSchema = new mongoose.Schema({
+    rating: Number,
+    review: String
 });
 
-// Define movie model
-const Movie = mongoose.model('Movie', movieSchema);
+// Define review model
+const Review = mongoose.model('Review', reviewSchema);
 
-// Define routes
-app.get('/movies', async (req, res) => {
-    try {
-        const movies = await Movie.find();
-        res.json(movies);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-app.post('/movies', async (req, res) => {
-    const movie = new Movie({
-        title: req.body.title,
-        director: req.body.director,
-        year: req.body.year
+// Route for submitting a new review
+app.post('/reviews', async (req, res) => {
+    const review = new Review({
+        rating: req.body.rating,
+        review: req.body.review
     });
     try {
-        const newMovie = await movie.save();
-        res.status(201).json(newMovie);
+        const newReview = await review.save();
+        res.status(201).json(newReview);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
