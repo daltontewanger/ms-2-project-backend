@@ -13,10 +13,25 @@ const PORT = process.env.PORT || 5000;
 //     origin: 'http://localhost:3000' // Allow requests from localhost:3000
 // }));
 
-app.use(cors({
-    origin: "https://ms-2-project-backend.onrender.com",
-    headers: ["Content-Type"]
-}));
+// Middleware
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://ms-2-project-backend.onrender.com',
+  ];
+  
+  app.use(cors({
+    origin: function(origin, callback) {
+      // Allow requests with no origin, like mobile apps or curl requests
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    allowedHeaders: ["Content-Type"]
+  }));
 
 app.use(function (req,res, next) {
     res.header("Access-Control-Allow-Origin", "*")
