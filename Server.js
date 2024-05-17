@@ -42,11 +42,25 @@ app.get('/reviews', async (req, res) => {
     }
 });
 
-// Route for retrieving a specific review by IMDb ID
+// Route for retrieving all reviews for an IMDB ID
 app.get('/reviews/:imdb', async (req, res) => {
     const { imdb } = req.params;
     try {
         const review = await Review.find({ imdb:imdb });
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found' });
+        }
+        res.json(review);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Route for retrieving a specific review by ID
+app.get('/reviews/:imdb/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const review = await Review.findById(id);
         if (!review) {
             return res.status(404).json({ message: 'Review not found' });
         }
@@ -71,11 +85,11 @@ app.post('/reviews', async (req, res) => {
     }
 });
 
-// Route for updating an existing review by IMDb ID
-app.put('/reviews/:imdb', async (req, res) => {
-    const { imdb } = req.params;
+// Route for updating an existing review by ID
+app.put('/reviews/:id', async (req, res) => {
+    const { id } = req.params;
     try {
-        const updatedReview = await Review.findOneAndUpdate({ imdb }, req.body, { new: true });
+        const updatedReview = await Review.findByIdAndUpdate(id, req.body, { new: true });
         if (!updatedReview) {
             return res.status(404).json({ message: 'Review not found' });
         }
@@ -85,11 +99,11 @@ app.put('/reviews/:imdb', async (req, res) => {
     }
 });
 
-// Route for deleting an existing review by IMDb ID
-app.delete('/reviews/:imdb', async (req, res) => {
-    const { imdb } = req.params;
+// Route for deleting an existing review by ID
+app.delete('/reviews/:id', async (req, res) => {
+    const { id } = req.params;
     try {
-        const deletedReview = await Review.findOneAndDelete({ imdb });
+        const deletedReview = await Review.findByIdAndDelete(id);
         if (!deletedReview) {
             return res.status(404).json({ message: 'Review not found' });
         }
