@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://ms-2-project-backend.onrender.com",
   "https://jedc-movie-reviews.onrender.com/",
 ];
 
@@ -32,7 +31,8 @@ app.use(
       }
     },
     credentials: true,
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"]
   })
 );
 
