@@ -9,22 +9,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({
-    origin: 'https://jedc-movie-reviews.onrender.com' || 'http://localhost:3000'
-}));
+app.use(
+  cors({
+    origin: 'https://jedc-movie-reviews.onrender.com' // used when deploying
+    // origin: "http://localhost:3000", // used when testing locally
+  })
+);
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header(
-        "Access-Control-Allow-Methods",
-        "GET,HEAD, OPTIONS, POST, PUT, DELETE"
-    )
-    res.header (
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    )
-    next()
-})
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,HEAD, OPTIONS, POST, PUT, DELETE"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
 app.use(express.json());
 
 // MongoDB connection
@@ -102,13 +105,24 @@ app.post("/reviews", async (req, res) => {
 // Route for updating an existing review by ID
 app.put("/reviews/:id", async (req, res) => {
   const { id } = req.params;
+  const { imdb, rating, review } = req.body;
+  if (!imdb || !rating || !review) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
   try {
-    const updatedReview = await Review.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updatedReview = await Review.findByIdAndUpdate(
+      id,
+      { imdb, rating, review },
+      {
+        new: true,
+      }
+    );
+
     if (!updatedReview) {
       return res.status(404).json({ message: "Review not found" });
     }
+
     res.json(updatedReview);
   } catch (error) {
     res.status(400).json({ message: error.message });
