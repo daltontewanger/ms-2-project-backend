@@ -10,10 +10,10 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000' // Allow requests from localhost:3000
+    origin: 'https://jedc-movie-reviews.onrender.com' || 'http://localhost:3000'
 }));
 
-app.use(function (req,res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header(
         "Access-Control-Allow-Methods",
