@@ -9,45 +9,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-// app.use(cors({
-//     origin: 'http://localhost:3000' // Allow requests from localhost:3000
-// }));
+app.use(cors({
+    origin: 'http://localhost:3000' // Allow requests from localhost:3000
+}));
 
-// Middleware
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://jedc-movie-reviews.onrender.com/",
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin, like mobile apps or curl requests
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"]
-  })
-);
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET,HEAD, OPTIONS, POST, PUT, DELETE"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  next();
-});
+app.use(function (req,res, next) {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header(
+        "Access-Control-Allow-Methods",
+        "GET,HEAD, OPTIONS, POST, PUT, DELETE"
+    )
+    res.header (
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    )
+    next()
+})
 app.use(express.json());
 
 // MongoDB connection
